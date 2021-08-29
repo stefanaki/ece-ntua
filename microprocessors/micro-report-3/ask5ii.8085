@@ -1,0 +1,53 @@
+EXERCISE_5II:
+MAIN:				LXI H,0000H	 	; init buffer at zero, stores mean value
+					MVI C,40H   		; C <- data counter
+					MVI B,00H			; store on B previous value of x7 from PORT IN
+											; wste na boresoume na edopisoume to thetiko metopo
+
+
+CHECK:			MOV A,C	    		; loop until all data read
+					CPI 00H 	
+					JZ  CALC    	   ; calculate mean  
+					IN  20H				; read from input
+					ANI 80H    	 	; isolate MSB = x7
+					CMP B	
+					MOV B,A        	; update B
+					JZ  CHECK	    	; An einai idia den exoume kapoio metwpo 
+					JNC INPUT  		; An A>B exoume thetiko metwpo
+					JMP CHECK			; Periptosi A<B.
+
+
+
+CALC:				DAD H 		
+					DAD H		    		; to calculate mean divide by 32 (right shift 5 times)
+					DAD H					; instead we can left shift 3 times
+					MOV A,L				; then result will be available on reg H instead of L
+					ANI 80H				; L will hold decimal part
+					CPI 80H				; so in order to round number we have to check L's MSB
+					JNZ FIN				; if it is equal to 1 increase H else leave it as it is
+					INR H
+
+FIN:				HLT
+
+
+
+INPUT:			IN  20H				; read input
+					ANI 0FH				; isolate 4 lsb's
+					MVI D,00H
+					MOV E,A
+					
+					MOV A,C
+					RRC					; right shift once to divide A by 2
+					JNC CONT	    		; if divisible then LSB was read else MSB was read
+					MOV A,E		    	; if it's the MSB shift left 4 times
+					RLC 
+					RLC
+					RLC
+					RLC
+					MOV E,A
+	
+CONT:				DAD D					; add D to buffer
+					DCR C 		    	; decrease counter
+					JMP CHECK
+
+					END

@@ -1,0 +1,139 @@
+EXERCISE_4:
+	JMP START
+
+; Routines that implement the logical gates
+; needed for the IC (XOR, OR, AND).
+; Input registers: D, E
+; Output register: C
+; Usage: Align bits to be compared on the same column and store
+;	  them in input registers D and E. Result will be stored
+;	  in register C on the same column as the input bits.
+
+XOR_OP:
+	MOV A,D
+	XRA E
+	MOV C,A
+	RET
+
+OR_OP:
+	MOV A,D
+	ORA E
+	MOV C,A
+	RET
+
+AND_OP:
+	MOV A,D
+	ANA E
+	MOV C,A
+	RET
+
+
+	; Driver code     
+START: LDA 2000H	; load input
+       MOV H,A      	; H stores input for later use
+
+	; First XOR gate between A0 and B0 
+	ANI 01H	; mask B0 and		
+	MOV D,A	; store it in input reg D
+	MOV A,H	; retrieve user input
+	ANI 02H	; mask A0
+	RRC		; right shift to align bits to be compared
+	MOV E,A	; store A0 in input reg E
+	CALL XOR_OP	
+	MOV L,C	; L <- A0 XOR B0
+
+	; Second XOR gate between A1 and B1
+	MOV A,H	
+	ANI 04H	; mask third input bit, that is B1
+	MOV D,A	; D <- B1
+	MOV A,H	
+	ANI 08H	; mask fourth input bit, that is A1
+	RRC		; bit alignment
+	MOV E,A	; E <- A1
+	CALL XOR_OP	
+	MOV B,C	; B <- A1 XOR B1
+
+	; Third XOR gate between (A0 XOR B0) and (A1 XOR B1)
+	MOV D,L	; store A0 XOR 01 in input reg D
+	MOV A,B	
+	RRC		; A1 XOR B1 has to be shifted right twice
+	RRC		; so that the output bit aligns with LSB
+	MOV E,A	; store A1 XOR B1 in input reg E
+	CALL XOR_OP
+	MOV L,C    	; L <- (A0 XOR B0) XOR (A1 XOR B1) in LSB
+	MOV A,B	; A1 XOR B1 also has to be given as output
+	RRC		; of the second led
+	ADD L		; so we add it to the final reg
+	MOV L,A    	; L <- result of first 2 leds
+
+	; First AND gate between A3 and B3
+	MOV A,H
+	ANI 40H	; mask to retrieve bit B3
+	MOV D,A	; store B3 in input reg D
+	MOV A,H
+	ANI 80H	; mask to retrieve A3
+	RRC		; right shift to align it with B3
+	MOV E,A	; store A3 in input reg E
+	CALL AND_OP
+	MOV B,C	; B <- A3 AND B3
+	MOV A,B	; right shift result three times
+	RRC		; to align it with output X3
+	RRC
+	RRC
+	ADD L		; store result in output reg
+	MOV L,A
+
+	; Second AND gate between A2 and B2
+	MOV A,H
+	ANI 10H 	; mask to retrieve B2
+	MOV D,A	; store B2 in input reg D
+	MOV A,H
+	ANI 20H	; mask to retrieve A2
+	RRC		; align A2 with B2
+	MOV E,A	
+	CALL AND_OP
+	MOV H,C	; H <- A2 AND B2 (running out of regs...)
+
+	; OR gate between (A3 AND B3) and (A2 AND B2)
+	MOV A,B	
+	RRC		; right shift twice A3 AND B3 to 
+	RRC		; align it with A2 AND B2
+	MOV D,A	; store A3 AND B3 in input reg D
+	MOV E,H	; store A2 AND B2 in input reg E
+	CALL OR_OP
+	MOV H,C	; H <- (A3 AND B3) OR (A2 AND B2)
+	MOV A,H
+	RRC		; right shift result twice so that it
+	RRC		; aligns with X2
+	ADD L		; store result in output reg L
+	
+	; Output the result on negative logic leds
+	MOV L,A 	
+	CMA
+	STA 3000H	
+	JMP START
+	END
+
+		
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

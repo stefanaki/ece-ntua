@@ -1,0 +1,47 @@
+START:
+	IN 10H
+	LXI B,01F4H	; put in BC delay equal to 500
+
+L2:
+	LDA 2000H
+	CPI 64H		; compare A with 100
+	JNC L1		; if A >= 100 jump to L1
+	MVI D,FFH	; put FFH( whose 2's complement is -1)  to D
+
+DECA:
+	INR D		; increase D by 1 in order to keep track of the number of tens
+	SUI 0AH		; substitute 10 from A
+	JNC DECA	;
+	ADI 0AH		; when A becomes negative add 10 to A to obtain number of units
+	MOV E,A		; store at E number of units
+	MOV A,D		; store at A number of tens
+	RLC			; shift left 4 times in order to put the tens in the 4 MSB
+	RLC
+	RLC
+	RLC
+	ADD E		; add number of units to A so that they appear at the 4 LSB
+	CMA			; complement because leds use negative logic
+	STA 3000H	; output to leds
+	JMP L2		; repeat
+
+L1:
+	CPI C8H		; compare A with 200
+	JNC L3		; if A >= 200 jump to L3
+
+	MVI A,F0H	; put 0 to the 4 LSB
+	STA 3000H	; the 4 Least significant leds light up
+	CALL DELB	; delay
+	MVI A,FFH	; put 1 to all bits
+	STA 3000H	; turn off all the leds
+	CALL DELB	; delay
+	JMP L2		; repeat
+
+L3:				; if A >= 200
+	MVI A,0FH	; put 1 to the 4 LSB
+	STA 3000H	; light up the 4 most significant leds
+	CALL DELB	; delay
+	MVI A,FFH	; put 1 to all bits
+	STA 3000H	; turn off all the leds
+	CALL DELB	; delay
+	JMP L2		; repeat
+END

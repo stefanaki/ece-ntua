@@ -1,0 +1,54 @@
+EXERCISE_5I:
+		IN  10H
+		MVI A,0DH 		; init interrupt mask
+		SIM
+		MVI B,00H 		
+		LXI H,0000H 	; init counter for mean value calculation
+		MVI C,01H		; init data counter
+		EI 	
+LOOP1: 
+		MOV A,C 			; check if all data has been fetched
+		CPI 41H 				
+		JNZ LOOP1
+		DI 
+		DAD H 			; calculate mean value
+		DAD H 
+		DAD H 
+		MOV A,L
+		ANI 80H
+		CPI 80H
+		JNZ FIN
+		INR H	
+FIN:	HLT
+
+002C: JMP RST5.5
+
+RST5.5: 
+		PUSH PSW 		; store A and flags
+		MOV A,B 
+		CPI 00H 			; check if LSB or MSB
+		JZ  LSB 
+		IN  20H
+		RLC 
+		RLC 
+		RLC 
+		RLC	 			; place MSBs in correct positions
+		ADD E 			; A now contains BCD number
+		MOV E,A 
+		MVI D,00H 	
+		DAD D  			; sum of data on HL 
+		MVI B,00H 		; store 0 because after comes LSB
+		INR C 			; increase data counter
+		POP PSW 
+		EI 
+		RET 
+LSB: 
+		IN 20H
+		MOV E,A 			; E <- LSB
+		INR B 			; increase B because after comes MSB
+		INR C 			; increase data counter
+		POP PSW 
+		EI 
+		RET
+
+		END

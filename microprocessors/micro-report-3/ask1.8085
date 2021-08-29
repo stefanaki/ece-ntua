@@ -1,0 +1,71 @@
+EXERCISE_1:	
+			IN   10H
+MAIN:		LXI  H,0A00H		; initialize 7 segment display
+			MVI  M,10H
+			INX  H
+			MVI  M,10H
+			INX  H
+			MVI  M,00H
+			INX  H
+			MVI  M,60H
+			INX  H
+			MVI  M,10H
+			INX  H
+			MVI  M,10H
+			MVI  A,0DH			; load interrupt mas 0D(hex) = 00001101(bin) 
+			SIM					; on A and enable interrupts
+			EI
+	
+INF:		LXI  H,0A02H
+			MVI  M,00H
+			INX  H				; infinite loop until interrupt 
+			MVI  M,00H			; until interrupt given, display on timer
+LO:		CALL DISP			; number 00
+			JMP  LO			
+	
+INTR_ROUTINE:
+			MVI  E,3CH			; initialize timer E <- 60
+			LXI  B,03E8H		; (BC) = 1000, delay 1000 ms
+			EI
+
+INIT:		
+			CALL NEXT_SEC		; calculate timer's next value
+			ANI  00H
+			STA  3000H			; turn on leds
+			CALL DISP			; display current value of timer
+			CALL DELB			; delay 50 ms
+			DCR  E
+			JNZ  INIT
+			JMP  INF
+
+NEXT_SEC:						; convert E to BCD and save digits on
+			PUSH PSW				; memory addresses 0?00, 0?01
+			PUSH B
+			PUSH H
+			MVI  B,FFH
+			MOV  A,E
+L3:		INR  B
+			SUI  0AH
+			JNC  L3				; loop until A becomes negative
+
+			ADI  0AH 			; add 10 to A, current state of registers:
+									; B <- tens, A <- units
+			LXI  H,0A02H
+			MOV  M,A				; 1st 7-seg-disp = units
+			INX  H	
+			MOV  M,B				; 2nd 7-seg-disp = tens
+
+			POP  H
+			POP  B
+			POP  PSW
+			RET
+
+DISP:		PUSH PSW
+			PUSH D
+			LXI  D,0A00H		; move block 0A00H - 0A05H to D
+			CALL STDM			; STDM, DCD read from reg D
+			CALL DCD
+			POP  D
+			POP  PSW
+			RET
+			END

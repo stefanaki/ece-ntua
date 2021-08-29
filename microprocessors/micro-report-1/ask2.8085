@@ -1,0 +1,49 @@
+START:
+	IN   10H		; input to accumulator
+	MVI  A,01H		; first led to be lit is 01H
+	CMA 			; negative logic leds
+	STA  3000H		; display output
+	CMA
+	MOV  D,A		; D reg represents current lighting led
+
+	LXI  B,01F4H	; B <- 0226H (550 dec)
+	CALL DELB		; delay 550 ms
+
+INPUT:
+	LDA  2000H		; load input
+	ANI  01H		; mask lsb
+	JZ   STANDBY	; if lsb == 0 goto STANDBY else check msb
+
+	LDA  2000H		; else load input again
+	ANI  80H		; mask msb
+	JNZ  RIGHT		; if msb == 1 goto RIGHT
+	JMP  LEFT		; else goto LEFT
+
+RIGHT:
+	MOV  A,D
+	RRC				; shift current led one position right
+	CMA
+	STA  3000H		; display output
+	CALL DELB		; delay
+	CMA
+	MOV  D,A		; move A to D
+	JMP  INPUT		; goto INPUT
+
+LEFT:
+	MOV  A,D
+	RLC				; shift current led one position left
+	CMA
+	STA  3000H
+	CALL DELB
+	CMA
+	MOV  D,A
+	JMP  INPUT
+
+STANDBY:
+	MOV  A,D		; assign current led to A
+	CMA				; negative logic led's
+	STA  3000H		; display current led
+	CALL DELB		; delay
+	CMA
+	JMP  INPUT		; continue program
+END

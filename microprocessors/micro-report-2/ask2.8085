@@ -1,0 +1,51 @@
+EXERCISE_2:
+	    	IN 10H			; remove memory protection
+		LXI B,0064H		; BC <- 64H (100 decimal) delay constant 100 ms
+		MVI D,C8H		; D <- C8H (200 decimal) for long delay 200 * 100 ms = 20 sec
+
+START:
+		MVI A,00H		
+		CMA			; negative logic output
+		STA 3000H		; turn off all leds
+
+					; the MSB is currently OFF 
+
+OFF_TO_ON:				; check for ON
+		CALL DELB		; delay
+		LDA 2000H		; load input on A
+		ANI 80H		; mask MSB
+		CPI 80H		; if MSB = 1 then goto ON_TO_OFF	
+		JNZ OFF_TO_ON		; else repeat
+
+ON_TO_OFF:				; check for OFF
+		CALL DELB		; delay
+		LDA 2000H		
+		ANI 80H			
+		CPI 00H		; if MSB = 1 then repeat else
+		JNZ ON_TO_OFF		; the push button is ON so we light the output byte
+		MVI A,FFH		; move the number FF hex = 255 decimal to register A
+		CMA			
+		STA 3000H		; turn on all the leds
+
+CONTINUE:
+		DCR D		
+		MOV A,D		
+		CPI 00H				
+		JZ START		; if D == 0 then jump to START else
+		CALL DELB				
+		LDA 2000H		; check for OFF-->ON
+		ANI 80H				
+		CPI 80H		; if MSB is ON then goto WAIT_FOR_OFF
+		JNZ CONTINUE		; jump to the subroutine CONTINUE
+
+WAIT_FOR_OFF:				; check for OFF-->ON
+		CALL DELB			
+		DCR D			; delay 20 sec while waiting for MSB to become ON
+		LDA 2000H		
+		ANI 80H			
+		CPI 00H		; if MSB = 1 then wait for OFF
+		JNZ WAIT_FOR_OFF 
+		MVI D,C8H		; else reset constant D <- C8H (200 dec)
+		JMP CONTINUE		; jump to CONTINUE
+
+		END

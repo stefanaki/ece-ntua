@@ -1,0 +1,62 @@
+EXERCISE_2:
+				IN   10H
+				LXI  H,0A00H
+				MVI  M,10H
+				INX  H
+				MVI  M,10H
+				INX  H 
+				MVI  M,10H		; 7 seg display outputs blank
+				INX  H 
+				MVI  M,10H
+				INX  H
+				MVI  M,10H 
+				INX  H
+				MVI  M,10H
+				MVI  A,0DH     
+				SIM				; enable 6.5 interrupts
+				EI            
+LOOP_A:                   	; infinite loop
+				JMP  LOOP_A		; wait for interrupt
+
+INTR_ROUTINE:               
+              
+           MVI  D,64H     	; D = 100
+           MVI  E,C8H     	; E = 200
+           INR  E         	; increase D, E 
+           INR  D         	; to do compare checks                
+           CALL KIND     	; input from keyboard
+           LXI  H,0A01H 	; load address for output of first given digit
+           MOV  M,A      	; which is the MSB
+           RLC           	; rotate 4 times
+           RLC           	; to move it to MSB bits
+           RLC           	; and save it on B temporarily
+           RLC           	
+           MOV  B,A       
+           LXI  H,0A00H  	; address for output of second digit     
+           CALL KIND			; input from keyboard
+           MOV  M,A       	; second digit is the LSB                 
+           ADD  B         	; add it to A, now A contains number in BCD
+           CMP  D         	; compare A and D
+           JC   LED_1     	; if [0..K1] then led 0 on
+           CMP  E         	; compare A and E
+           JC   LED_2     	; if (K1..K2] then led 1 on
+           MVI  A,04H     	; else if (K2..255] then led 2 on
+           CMA            	; complement (negative logic leds)
+           STA  3000H     	; turn leds on
+           JMP  PRINT     	; display digits on lcd screen
+LED_1:     MVI  A,01H     
+           CMA           	; labels to turn on proper led
+           STA  3000H
+           JMP  PRINT
+LED_2:     MVI  A,02H
+           CMA
+           STA  3000H
+           JMP  PRINT
+              
+PRINT:                       
+           LXI  D,0A00H    ; load to D address display address block
+           CALL STDM       
+           CALL DCD
+           EI             	; enable interrupts again
+           JMP  PRINT      ; PRINT until new interrupt
+           END
