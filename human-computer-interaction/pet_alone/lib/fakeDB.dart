@@ -1,0 +1,23 @@
+// ignore_for_file: file_names, unnecessary_new
+
+import 'package:pet_alone/models/User.dart';
+import 'package:pet_alone/models/Review.dart';
+
+class FakeDB {
+  static final users = [
+    User(username: 'katiamat99', firstName: 'Katia', lastName: 'Matalliotaki', location: 'Goudi,Athens', picture: 'assets/images/katia.JPG', rating: 4, distance: 3, numOfReviews: 15, availableFrom: '2022-02-03', availableTo: '2022-03-26', pettingServices: ['cats', 'dogs', 'bunnies'], pets: [ Pet(name: 'nefeli', petPhoto: 'assets/images/nefeli.JPG') ], about: 'Hello friends! I am Katia and I am 22 years old. If you are in a need of a pet sitter,hit me up!I will be more than happy to help :)', favourite: true, isOnline: true),
+    User(username: 'ChrisRed', firstName: 'Christina', lastName: 'Rentifi', location: 'Koukaki,Athens', picture: 'assets/images/chrisred.JPG', rating: 5, distance: 6, numOfReviews: 5, availableFrom: '2022-04-10', availableTo: '2022-05-17', pettingServices: ['turtles', 'dogs'], pets: [ Pet(name: 'mitsos', petPhoto: 'assets/images/mitsos.JPG') ], about: 'My name is Christina and I love animals.Right now, I have a lot of free time so you can book me as a pet sitter for free!', favourite: false, isOnline: true),
+    User(username: 'giorgisstef', firstName: 'Giorgos', lastName: 'Stefanakis', location: 'Omonoia,Athens', picture: 'assets/images/giorgisstef.JPG', rating: 4, distance: 10, numOfReviews: 2, availableFrom: '2022-06-17', availableTo: '2022-06-30', pettingServices: ['dogs', 'cats', 'raccoons'], pets: [ Pet(name: 'fifi', petPhoto: 'assets/images/fifi.JPG') ], about: 'Hi!I am Giorgis and I am a software engineer.Since I stay in my home 24/7,your pets will never feel lonely or bored! My cat, Fifi is very energetic and loves to play with people and animals!!', favourite: true, isOnline: true),
+    User(username: 'makispap', firstName: 'Makis', lastName: 'Papadopoulos', location: 'Galatsi,Athens', picture: 'assets/images/makispap.JPG', rating: 3, distance: 2, numOfReviews: 1, availableFrom: '2022-04-12', availableTo: '2022-04-19', pettingServices: ['dogs', 'snakes'], pets: [Pet(name: 'lila', petPhoto: 'assets/images/lila.JPG')], about: 'Hello, if you are in need of a pet sitter hit me up!', favourite: false, isOnline: true),
+    User(username: 'afropap', firstName: 'Afroditi', lastName: 'Papadaki', location: 'Ilisia,Athens', picture: 'assets/images/afropap.JPG', rating: 5, distance: 6, numOfReviews: 3, availableFrom: '2022-05-10', availableTo: '2022-06-12', pettingServices: ["cats","dogs","bunnies","birds"], pets: [Pet(name: 'rex', petPhoto: 'assets/images/rex.JPG')], about: 'My name is Afro and I come from a family that always had pets.I have a big experience and I am also an upcoming vet so I will be very happy to pet your animal friend :)', favourite: false, isOnline: false),
+    User(username: 'vassilis', firstName: 'Vassilis', lastName: 'Papaspyrou', location: 'Neo Irakleio,Athens', picture: 'assets/images/vasilis.JPG', rating: 3, distance: 6, numOfReviews: 7, availableFrom: '2022-06-14', availableTo: '2022-06-25', pettingServices: ['dogs', 'cats', 'birds'], pets: [Pet(name: 'stelios', petPhoto: 'assets/images/stelios.JPG')], about: 'Hello I am Vasilis and I am 30 years old.Message me If you want me to be your next pet sitter!', favourite: true, isOnline: false),
+    User(username: 'artemiskr', firstName: 'Artemis', lastName: 'Krasagaki', location: 'Pagrati,Athens', picture: 'assets/images/artemis.JPG', rating: 4, distance: 5, numOfReviews: 3, availableFrom: '2022-03-14', availableTo: '2022-03-20', pettingServices: ['cats', 'dogs'], pets: [ Pet(name: 'mpempa', petPhoto: 'assets/images/mpempa.JPG')], about: 'Hello I am Artemis and I will be very happy to be ypur next pet sitter!', favourite: false, isOnline: false)
+  ];
+
+  static final reviews = [
+    Review(username: 'zouzou', rating: 5, comment: 'I am very pleased with the pet sitter.My pet came back very happy and and well fed.Definitely recommended!!', picture: 'assets/images/alext.JPG'),
+    Review(username: 'emmaper', rating: 4, comment: "The host was more than helpful regarding my pet's medicine that he has to take every 12hrs. Such a kind person. The only negative was the fact that the host's house is tiny, so if you have a big dog you should consider switching to a different option.", picture: 'assets/images/emma.JPG'),
+    Review(username: 'mariak', rating: 5, comment: 'I am more than happy with the host. Job well done!.', picture: 'assets/images/mariak.JPG'),
+    Review(username: 'andrei', rating: 3, comment: 'Not really fond of that sitter...', picture: 'assets/images/andrei.JPG')
+  ];
+}
