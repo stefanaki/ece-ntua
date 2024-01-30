@@ -1,0 +1,3 @@
+[submodule "software-engineering/diode"]
+	path = software-engineering/diode
+	url = https://github.com/stefanaki/diode.git
