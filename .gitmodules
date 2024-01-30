@@ -1,3 +1,23 @@
 [submodule "software-engineering/diode"]
 	path = software-engineering/diode
 	url = https://github.com/stefanaki/diode.git
+[submodule "distributed-systems/noobcash"]
+	path = distributed-systems/noobcash
+	url = https://github.com/stefanaki/noobcash.git
+	branch = main
+[submodule "introduction-to-databases/asdf-app"]
+	path = introduction-to-databases/asdf-app
+	url = https://github.com/stefanaki/asdf-app.git
+	branch = master
+[submodule "multimedia-lab/minesweeper"]
+	path = multimedia-lab/minesweeper
+	url = https://github.com/stefanaki/minesweeper.git
+	branch = main
+[submodule "saas/my-charts"]
+	path = saas/my-charts
+	url = https://github.com/stefanaki/my-charts.git
+	branch = main
+[submodule "advanced-topics-in-database-systems/yellow-taxi-trip-records-22"]
+	path = advanced-topics-in-database-systems/yellow-taxi-trip-records-22
+	url = https://github.com/stefanaki/yellow-taxi-trip-records-22.git
+	branch = main
